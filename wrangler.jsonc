@@ -1,0 +1,8 @@
+{
+  "name": "orderkuota",
+  "compatibility_date": "2026-04-16",
+  "main": "_worker.js",
+  "assets": {
+    "directory": "./public"
+  }
+}
