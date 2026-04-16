@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html lang="id" data-theme="light">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
+<title>OrderKuota QRIS API — Documentation</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --ink:#f0f4ff;--surface:#ffffff;--panel:#f8faff;--raised:#edf0fa;
+  --line:#dde2f0;--line2:#c8cfe6;--muted:#9ba8c8;--dim:#6b7a9e;
+  --body:#3d4a6e;--head:#0d1226;
+  --blue:#3b82f6;--blue-dim:rgba(59,130,246,.12);--blue-glow:rgba(59,130,246,.25);
+  --violet:#8b5cf6;--violet-dim:rgba(139,92,246,.12);
+  --cyan:#06b6d4;--cyan-dim:rgba(6,182,212,.1);
+  --green:#10b981;--green-dim:rgba(16,185,129,.1);
+  --amber:#f59e0b;--amber-dim:rgba(245,158,11,.1);
+  --red:#ef4444;--red-dim:rgba(239,68,68,.1);
+  --mono:'IBM Plex Mono',monospace;--sans:'Outfit',sans-serif;
+  --sidebar-w:260px;--topbar-h:60px;
+}
+[data-theme="dark"]{
+  --ink:#0b0d12;--surface:#111520;--panel:#171c2b;--raised:#1d2235;
+  --line:#252d42;--line2:#2e3850;--muted:#4a5578;--dim:#7a86a8;
+  --body:#b8c2db;--head:#e8edf8;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;-webkit-tap-highlight-color:transparent}
+body{font-family:var(--sans);background:var(--ink);color:var(--body);font-size:14px;line-height:1.6;overflow-x:hidden;width:100%;-webkit-text-size-adjust:100%}
+a{color:inherit;text-decoration:none}
+button{font-family:var(--sans);cursor:pointer;border:none;outline:none;-webkit-appearance:none}
+input{-webkit-appearance:none;appearance:none}
+code{font-family:var(--mono);word-break:break-all}
+::-webkit-scrollbar{width:4px;height:4px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--line2);border-radius:10px}
+.app{display:flex;min-height:100vh;min-height:100dvh}
+.sidebar{width:var(--sidebar-w);flex-shrink:0;background:var(--surface);border-right:1px solid var(--line);position:fixed;inset:0 auto 0 0;overflow-y:auto;z-index:200;display:flex;flex-direction:column;transition:transform .35s cubic-bezier(0.16,1,0.3,1)}
+.s-logo{padding:18px 20px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;gap:8px}
+.s-logo-inner{display:flex;align-items:center;gap:10px;min-width:0}
+.s-icon{width:34px;height:34px;flex-shrink:0;border-radius:9px;background:linear-gradient(135deg,var(--blue),var(--violet));display:flex;align-items:center;justify-content:center;box-shadow:0 4px 12px var(--blue-glow)}
+.s-icon svg{width:17px;height:17px;fill:white}
+.s-name{font-weight:800;font-size:14.5px;color:var(--head);letter-spacing:-.02em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.s-close{display:none;flex-shrink:0;background:var(--panel);color:var(--dim);padding:7px;border-radius:9px;line-height:0;transition:background .2s}
+.s-close:hover{background:var(--raised)}
+.nav{padding:14px 0;flex:1}
+.nav-grp-label{padding:10px 20px 5px;font-family:var(--mono);font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.nav-a{display:flex;align-items:center;gap:10px;padding:9px 20px;font-size:13px;color:var(--dim);border-left:3px solid transparent;transition:all .2s}
+.nav-a:hover{color:var(--blue);background:var(--panel)}
+.nav-a.active{color:var(--blue);border-left-color:var(--blue);background:var(--blue-dim);font-weight:600}
+.nav-a svg{width:15px;height:15px;flex-shrink:0;opacity:0.7}
+.main{margin-left:var(--sidebar-w);flex:1;min-width:0;width:100%}
+
+.topbar{
+  height:var(--topbar-h);
+  position:sticky;top:0;z-index:100;
+  background:var(--surface);
+  border-bottom:1px solid var(--line);
+  display:flex;align-items:center;
+  padding:0 20px;gap:10px;
+  backdrop-filter:blur(12px);
+  -webkit-backdrop-filter:blur(12px);
+}
+.t-hamburger{
+  display:none;flex-shrink:0;
+  background:transparent;
+  border:1.5px solid var(--line2);
+  color:var(--dim);
+  padding:8px;border-radius:9px;line-height:0;
+  transition:all .2s;
+}
+.t-hamburger:hover{background:var(--panel);color:var(--head);border-color:var(--blue)}
+.t-bread{
+  flex:1;
+  font-family:var(--mono);font-size:11px;
+  color:var(--muted);
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+  min-width:0;
+}
+.t-right{display:flex;align-items:center;gap:8px;flex-shrink:0}
+.t-online{
+  display:flex;align-items:center;gap:6px;
+  font-size:11.5px;color:var(--green);font-weight:700;
+  background:var(--green-dim);
+  border:1px solid rgba(16,185,129,.25);
+  padding:5px 10px;border-radius:99px;
+  white-space:nowrap;
+}
+.t-pulse{width:6px;height:6px;background:var(--green);border-radius:50%;animation:pulse 2s infinite;flex-shrink:0}
+@keyframes pulse{0%{box-shadow:0 0 0 0 rgba(16,185,129,.4)}70%{box-shadow:0 0 0 7px rgba(16,185,129,0)}100%{box-shadow:0 0 0 0 rgba(16,185,129,0)}}
+.t-theme{
+  background:var(--panel);
+  border:1.5px solid var(--line2);
+  color:var(--dim);
+  padding:6px 11px;border-radius:9px;
+  font-size:11.5px;
+  display:flex;align-items:center;gap:7px;
+  font-weight:600;white-space:nowrap;line-height:1;
+  transition:all .2s;
+}
+.t-theme:hover{background:var(--raised);color:var(--head);border-color:var(--blue)}
+.t-theme svg{width:15px;height:15px;flex-shrink:0}
+
+.content{max-width:860px;margin:0 auto;padding:40px 24px 0;width:100%}
+.section{margin-bottom:72px;scroll-margin-top:calc(var(--topbar-h) + 24px)}
+.page-title{font-size:clamp(26px,5vw,42px);font-weight:800;color:var(--head);letter-spacing:-.04em;line-height:1.1;margin-bottom:14px}
+.page-sub{font-size:15px;color:var(--dim);line-height:1.75;max-width:680px;margin-bottom:28px}
+.sec-title{font-size:18px;font-weight:700;color:var(--head);margin-bottom:20px;display:flex;align-items:center;gap:10px}
+.sec-title svg{color:var(--blue);flex-shrink:0}
+.hero-band{background:linear-gradient(135deg,rgba(59,130,246,.09),rgba(139,92,246,.07));border:1px solid var(--line);border-radius:20px;padding:32px;margin-bottom:40px;overflow:hidden}
+.hero-tag{display:inline-flex;align-items:center;gap:7px;font-family:var(--mono);font-size:10px;font-weight:800;background:var(--blue-dim);color:var(--blue);border:1px solid var(--blue-glow);padding:5px 12px;border-radius:99px;margin-bottom:16px;text-transform:uppercase}
+.hero-meta-row{display:flex;flex-wrap:wrap;gap:10px;margin-top:20px}
+.meta-chip{display:flex;align-items:center;gap:8px;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:10px 14px;font-size:12.5px;color:var(--dim)}
+.grid-2{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;margin-bottom:28px}
+.info-card{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:22px;transition:all .25s}
+.info-card:hover{transform:translateY(-3px);border-color:var(--blue);box-shadow:0 10px 24px rgba(0,0,0,.05)}
+.ic-icon{width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center;margin-bottom:14px;flex-shrink:0}
+.ic-blue{background:var(--blue-dim);color:var(--blue)}
+.ic-red{background:var(--red-dim);color:var(--red)}
+.ic-green{background:var(--green-dim);color:var(--green)}
+.ic-violet{background:var(--violet-dim);color:var(--violet)}
+.ic-cyan{background:var(--cyan-dim);color:var(--cyan)}
+.ic-amber{background:var(--amber-dim);color:var(--amber)}
+.ic-title{font-size:13.5px;font-weight:700;color:var(--head);margin-bottom:7px}
+.ic-desc{font-size:12.5px;color:var(--dim);line-height:1.65}
+.callout{display:flex;align-items:flex-start;gap:12px;padding:16px 18px;border-radius:14px;font-size:13.5px;margin-bottom:24px;border-left:4px solid transparent;line-height:1.65}
+.callout svg{flex-shrink:0;margin-top:1px}
+.cl-info{background:var(--blue-dim);border-left-color:var(--blue);color:var(--body)}
+.cl-warn{background:var(--amber-dim);border-left-color:var(--amber);color:var(--body)}
+.try-card{background:var(--surface);border:1px solid var(--line);border-radius:20px;padding:24px}
+.field-wrap{margin-bottom:16px}
+.field-label{display:block;font-size:10.5px;font-weight:800;color:var(--muted);margin-bottom:8px;letter-spacing:.06em;text-transform:uppercase}
+.field-input{width:100%;background:var(--panel);border:1.5px solid var(--line2);color:var(--head);padding:13px 15px;border-radius:11px;font-family:var(--mono);outline:none;transition:all .25s;font-size:13px;display:block}
+.field-input:focus{border-color:var(--blue);box-shadow:0 0 0 3px var(--blue-dim);background:var(--surface)}
+.field-input::placeholder{color:var(--muted)}
+.btn{width:100%;padding:14px;border-radius:11px;font-weight:800;display:flex;align-items:center;justify-content:center;gap:10px;transition:all .25s;font-size:14px;cursor:pointer;border:none;font-family:var(--sans);line-height:1}
+.btn:disabled{opacity:.55;cursor:not-allowed}
+.btn-primary{background:linear-gradient(135deg,var(--blue),var(--violet));color:white;box-shadow:0 4px 14px var(--blue-glow)}
+.btn-primary:not(:disabled):hover{transform:translateY(-1px);box-shadow:0 8px 22px var(--blue-glow)}
+.btn-green{background:linear-gradient(135deg,var(--green),var(--cyan));color:white;box-shadow:0 4px 14px rgba(16,185,129,.3)}
+.btn-green:not(:disabled):hover{transform:translateY(-1px)}
+.btn-ghost{background:var(--panel);color:var(--dim);border:1.5px solid var(--line2)}
+.btn-ghost:hover{background:var(--raised);color:var(--head)}
+.btn-row{display:flex;gap:10px;margin-top:4px}
+.btn-row .btn{flex:1}
+.btn-row .btn-green{flex:2}
+.step-bar{display:flex;align-items:center;margin-bottom:24px}
+.step-item{display:flex;align-items:center;gap:8px}
+.step-num{width:26px;height:26px;border-radius:50%;background:var(--panel);border:2px solid var(--line2);display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:10px;font-weight:800;color:var(--muted);flex-shrink:0;transition:all .3s}
+.step-num.active{background:var(--blue);border-color:var(--blue);color:white}
+.step-num.done{background:var(--green);border-color:var(--green);color:white}
+.step-lbl{font-size:12.5px;font-weight:600;color:var(--muted);transition:all .3s;white-space:nowrap}
+.step-lbl.active{color:var(--blue)}
+.step-lbl.done{color:var(--green)}
+.step-line{flex:1;height:2px;background:var(--line);margin:0 8px;transition:background .3s;min-width:12px}
+.step-line.done{background:var(--green)}
+.otp-section{display:none;margin-top:20px;padding-top:20px;border-top:1px solid var(--line)}
+.token-box{display:none;margin-top:20px;background:var(--green-dim);border:1.5px solid var(--green);border-radius:14px;padding:20px}
+.token-box-label{font-family:var(--mono);font-size:10px;font-weight:800;color:var(--green);text-transform:uppercase;margin-bottom:5px;letter-spacing:.08em}
+.token-box-hint{font-size:12.5px;color:var(--dim);margin-bottom:12px;line-height:1.5}
+.token-val{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:12px 14px;display:flex;align-items:center;gap:10px}
+.token-val span{font-family:var(--mono);font-size:12px;color:var(--head);word-break:break-all;flex:1;line-height:1.5}
+.copy-btn{flex-shrink:0;background:var(--blue);color:white;padding:7px 12px;border-radius:8px;font-size:11px;font-weight:700;cursor:pointer;transition:all .2s;border:none;font-family:var(--sans)}
+.copy-btn:hover{opacity:.85}
+.token-meta{margin-top:10px;font-size:12px;color:var(--dim)}
+.token-meta strong{color:var(--head)}
+.res-container{margin-top:28px;display:none}
+.res-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;gap:8px;flex-wrap:wrap}
+.res-badge{font-family:var(--mono);font-size:11px;font-weight:800;padding:5px 11px;border-radius:7px;text-transform:uppercase}
+.res-badge.ok{background:var(--green-dim);color:var(--green)}
+.res-badge.err{background:var(--red-dim);color:var(--red)}
+.res-meta{font-size:11px;color:var(--muted);font-family:var(--mono)}
+.res-tabs{display:flex;background:var(--panel);padding:4px;border-radius:11px;margin-bottom:14px;border:1px solid var(--line2);width:fit-content}
+.res-tab{padding:8px 18px;font-size:12.5px;font-weight:700;color:var(--dim);border-radius:9px;transition:all .2s;cursor:pointer;user-select:none}
+.res-tab.active{background:var(--surface);color:var(--blue);box-shadow:0 2px 8px rgba(0,0,0,.06)}
+.res-box{border:1px solid var(--line);border-radius:14px;overflow:hidden;background:var(--surface)}
+.tbl-wrap{overflow-x:auto;width:100%;-webkit-overflow-scrolling:touch}
+table{width:100%;border-collapse:collapse;min-width:560px}
+th{padding:12px 14px;text-align:left;font-family:var(--mono);font-size:10px;font-weight:800;color:var(--muted);background:var(--panel);border-bottom:1px solid var(--line);white-space:nowrap}
+td{padding:13px 14px;border-bottom:1px solid var(--line);font-size:12.5px;color:var(--dim);vertical-align:middle}
+tr:last-child td{border-bottom:none}
+.text-right{text-align:right}
+.res-json{background:#0d1226;padding:18px;font-family:var(--mono);font-size:12px;line-height:1.7;overflow-x:auto;max-height:400px;color:#a6accd}
+
+.footer{
+  margin-top:80px;
+  padding:32px 24px;
+  background:var(--surface);
+  border-top:1px solid var(--line);
+  display:flex;flex-direction:column;
+  align-items:center;gap:8px;
+  width:100%;text-align:center;
+}
+.f-logo{display:flex;align-items:center;gap:10px;font-weight:800;color:var(--head);font-size:15px}
+.f-dot{width:4px;height:4px;background:var(--blue);border-radius:50%}
+.f-text{font-size:12.5px;color:var(--muted);max-width:440px;line-height:1.6}
+.f-copy{font-weight:700;color:var(--blue)}
+
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:150;opacity:0;pointer-events:none;transition:.3s;backdrop-filter:blur(4px)}
+.overlay.show{opacity:1;pointer-events:auto}
+
+@media(max-width:768px){
+  :root{--sidebar-w:0px;--topbar-h:56px}
+  .sidebar{width:280px;transform:translateX(-100%)}
+  .sidebar.open{transform:translateX(0);box-shadow:20px 0 40px rgba(0,0,0,.18)}
+  .main{margin-left:0}
+  .t-hamburger{display:flex}
+  .s-close{display:flex}
+  .t-bread{display:none}
+  .grid-2{grid-template-columns:1fr}
+  .content{padding:24px 16px 0}
+  .hero-band{padding:22px 18px}
+  .try-card{padding:18px}
+  .token-box{padding:16px}
+  .step-lbl{display:none}
+  .footer{padding:28px 16px}
+  .btn-row{flex-direction:column}
+  .btn-row .btn-green{flex:1}
+  .page-title{font-size:clamp(22px,6vw,32px)}
+  .section{margin-bottom:56px}
+}
+@media(max-width:480px){
+  .t-online span{display:none}
+  .t-online{padding:6px 8px}
+  .topbar{padding:0 14px;gap:8px}
+  .t-theme span{display:none}
+  .t-theme{padding:7px 9px}
+}
+</style>
+</head>
+<body>
+<div class="app">
+
+<aside class="sidebar" id="sidebar">
+  <div class="s-logo">
+    <div class="s-logo-inner">
+      <div class="s-icon"><svg viewBox="0 0 20 20"><path d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM3 10a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H4a1 1 0 01-1-1v-6zM14 9a1 1 0 00-1 1v6a1 1 0 001 1h2a1 1 0 001-1v-6a1 1 0 00-1-1h-2z"/></svg></div>
+      <div class="s-name">OrderKuota API</div>
+    </div>
+    <button class="s-close" id="sClose"><svg width="17" height="17" fill="currentColor" viewBox="0 0 20 20"><path d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"/></svg></button>
+  </div>
+  <nav class="nav">
+    <div class="nav-grp-label">Dokumentasi</div>
+    <a href="#overview" class="nav-a active"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>Overview</a>
+    <a href="#auth" class="nav-a"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944"/></svg>Autentikasi</a>
+    <div class="nav-grp-label">Integrasi</div>
+    <a href="#gettoken" class="nav-a"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z"/></svg>Get Token</a>
+    <a href="#tryit" class="nav-a"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg>Try It Live</a>
+  </nav>
+  <div style="padding:16px 20px;font-size:11px;color:var(--muted);border-top:1px solid var(--line);line-height:1.9">
+    Engine: <strong style="color:var(--dim)">Cloudflare Workers</strong><br/>
+    Environment: <strong style="color:var(--dim)">Production</strong>
+  </div>
+</aside>
+
+<div class="overlay" id="overlay"></div>
+
+<div class="main">
+  <div class="topbar">
+    <button class="t-hamburger" id="hamburger" aria-label="Menu">
+      <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"/></svg>
+    </button>
+    <div class="t-bread">ecosystem <span style="opacity:.3;margin:0 3px">/</span> orderkuota <span style="opacity:.3;margin:0 3px">/</span> v2</div>
+    <div class="t-right">
+      <div class="t-online"><div class="t-pulse"></div><span>API Ready</span></div>
+      <button class="t-theme" id="themeBtn">
+        <svg id="themeIco" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/></svg>
+        <span id="themeLbl">Dark</span>
+      </button>
+    </div>
+  </div>
+
+  <div class="content">
+
+    <section id="overview" class="section">
+      <div class="hero-band">
+        <div class="hero-tag">Official Documentation</div>
+        <h1 class="page-title">OrderKuota QRIS<br/>Mutasi API</h1>
+        <p class="page-sub">Server proxy berkinerja tinggi yang menjembatani aplikasi Anda dengan platform OrderKuota secara aman, cepat, dan stabil tanpa integrasi manual yang rumit.</p>
+        <div class="hero-meta-row">
+          <div class="meta-chip"><strong>Base:</strong>&nbsp;<code id="baseUrlDisplay" style="font-size:12px"></code></div>
+          <div class="meta-chip"><strong>Mode:</strong>&nbsp;<code style="font-size:12px">High Speed</code></div>
+        </div>
+      </div>
+
+      <div class="sec-title">Fitur & Keunggulan</div>
+      <div class="grid-2">
+        <div class="info-card">
+          <div class="ic-icon ic-blue"><svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4"/></svg></div>
+          <div class="ic-title">Intelligent Caching</div>
+          <div class="ic-desc">Cache in-memory 15 detik dengan single-flight lock. Mencegah request berulang ke server eksternal saat trafik tinggi.</div>
+        </div>
+        <div class="info-card">
+          <div class="ic-icon ic-red"><svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636"/></svg></div>
+          <div class="ic-title">IP Rate Limiting</div>
+          <div class="ic-desc">Limit 150 request per 15 detik per IP. Trafik mencurigakan diblokir otomatis selama 5 menit.</div>
+        </div>
+        <div class="info-card">
+          <div class="ic-icon ic-green"><svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2"/></svg></div>
+          <div class="ic-title">Auto Fallback</div>
+          <div class="ic-desc">Otomatis menyajikan data cache terakhir jika API eksternal mengalami gangguan.</div>
+        </div>
+        <div class="info-card">
+          <div class="ic-icon ic-violet"><svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944"/></svg></div>
+          <div class="ic-title">Zero Persistence</div>
+          <div class="ic-desc">Kredensial hanya diproses di RAM. Tidak ada token atau username yang ditulis ke disk.</div>
+        </div>
+        <div class="info-card">
+          <div class="ic-icon ic-cyan"><svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A2 2 0 013 12V7a4 4 0 014-4z"/></svg></div>
+          <div class="ic-title">Source Tracking</div>
+          <div class="ic-desc">Metadata asal data (Fresh API, Valid Cache, atau Fallback) disertakan untuk pemantauan real-time.</div>
+        </div>
+        <div class="info-card">
+          <div class="ic-icon ic-amber"><svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9"/></svg></div>
+          <div class="ic-title">Domain Agnostic</div>
+          <div class="ic-desc">Endpoint terdeteksi otomatis sesuai host aktif. Tidak perlu ubah kode saat ganti domain.</div>
+        </div>
+      </div>
+    </section>
+
+    <section id="auth" class="section">
+      <div class="sec-title">Autentikasi Keamanan</div>
+      <div class="callout cl-warn">
+        <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+        <div>Wajib menyertakan parameter <strong>username</strong> dan <strong>token</strong> (userId:secret) dalam body request metode POST. Jangan bagikan token Anda kepada siapapun.</div>
+      </div>
+    </section>
+
+    <section id="gettoken" class="section">
+      <div class="sec-title">
+        <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z"/></svg>
+        Dapatkan Token OrderKuota
+      </div>
+      <div class="callout cl-info">
+        <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+        <div>Login dengan username dan password akun OrderKuota. OTP dikirim ke email terdaftar, lalu masukkan OTP untuk mendapatkan token.</div>
+      </div>
+      <div class="try-card">
+        <div class="step-bar">
+          <div class="step-item">
+            <div class="step-num active" id="stepNum1">1</div>
+            <div class="step-lbl active" id="stepLbl1">Login</div>
+          </div>
+          <div class="step-line" id="stepLine1"></div>
+          <div class="step-item">
+            <div class="step-num" id="stepNum2">2</div>
+            <div class="step-lbl" id="stepLbl2">Verifikasi OTP</div>
+          </div>
+          <div class="step-line" id="stepLine2"></div>
+          <div class="step-item">
+            <div class="step-num" id="stepNum3">3</div>
+            <div class="step-lbl" id="stepLbl3">Token Didapat</div>
+          </div>
+        </div>
+
+        <div id="loginSection">
+          <div class="field-wrap">
+            <label class="field-label">Username OrderKuota</label>
+            <input type="text" id="loginUser" class="field-input" placeholder="Contoh: user_orderkuota" autocomplete="username" autocapitalize="none" autocorrect="off"/>
+          </div>
+          <div class="field-wrap">
+            <label class="field-label">Password</label>
+            <input type="password" id="loginPass" class="field-input" placeholder="Password akun OrderKuota" autocomplete="current-password"/>
+          </div>
+          <button class="btn btn-primary" id="loginBtn" onclick="doLogin()">Kirim OTP ke Email</button>
+        </div>
+
+        <div class="otp-section" id="otpSection">
+          <div class="field-wrap">
+            <label class="field-label">Kode OTP</label>
+            <input type="text" id="otpInput" class="field-input" placeholder="Masukkan kode OTP dari email" maxlength="10" inputmode="numeric" autocomplete="one-time-code"/>
+          </div>
+          <div class="btn-row">
+            <button class="btn btn-ghost" onclick="resetLogin()">Ulangi</button>
+            <button class="btn btn-green" id="otpBtn" onclick="doVerifyOtp()">Verifikasi OTP</button>
+          </div>
+        </div>
+
+        <div class="token-box" id="tokenBox">
+          <div class="token-box-label">Token Berhasil Didapat</div>
+          <div class="token-box-hint">Gunakan token berikut untuk mengakses endpoint mutasi QRIS. Token otomatis diisi pada form Try It Live.</div>
+          <div class="token-val">
+            <span id="tokenDisplay"></span>
+            <button class="copy-btn" onclick="copyToken()">Salin</button>
+          </div>
+          <div class="token-meta">Username: <strong id="tokenUsernameDisplay"></strong></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="tryit" class="section">
+      <div class="sec-title">Interactive Try It Live</div>
+      <div class="try-card">
+        <div class="field-wrap">
+          <label class="field-label">Username OrderKuota</label>
+          <input type="text" id="tryUser" class="field-input" placeholder="Contoh: user_orderkuota" autocapitalize="none" autocorrect="off"/>
+        </div>
+        <div class="field-wrap" style="margin-bottom:20px">
+          <label class="field-label">Authentication Token</label>
+          <input type="password" id="tryTok" class="field-input" placeholder="userId:secret_key"/>
+        </div>
+        <button class="btn btn-primary" id="sendBtn" onclick="doReq()">Eksekusi Request Mutasi</button>
+
+        <div class="res-container" id="resContainer">
+          <div class="res-header">
+            <span id="resBadge" class="res-badge"></span>
+            <span class="res-meta" id="resMeta"></span>
+          </div>
+          <div class="res-tabs">
+            <div class="res-tab active" id="tabTbl" onclick="switchView('tbl')">Tabel</div>
+            <div class="res-tab" id="tabJson" onclick="switchView('json')">JSON Raw</div>
+          </div>
+          <div class="res-box">
+            <div id="viewTbl" class="tbl-wrap">
+              <table>
+                <thead><tr><th>ID</th><th>Waktu</th><th>Keterangan</th><th class="text-right">Kredit</th><th class="text-right">Saldo Akhir</th></tr></thead>
+                <tbody id="resTbody"></tbody>
+              </table>
+            </div>
+            <div id="viewJson" class="res-json" style="display:none"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </div>
+
+  <footer class="footer">
+    <div class="f-logo">
+      <span>OrderKuota</span>
+      <div class="f-dot"></div>
+      <span>Unofficial API</span>
+    </div>
+    <div class="f-text">&copy; <span id="year"></span> <span class="f-copy">OrderKuota</span>. All rights reserved.</div>
+  </footer>
+</div>
+
+</div>
+<script>
+const API_EP = window.location.origin + "/api/orderkuota";
+const LOGIN_EP = window.location.origin + "/api/login";
+const OTP_EP = window.location.origin + "/api/verify-otp";
+document.getElementById('baseUrlDisplay').textContent = window.location.origin;
+document.getElementById('year').textContent = new Date().getFullYear();
+
+let dark = false;
+document.getElementById('themeBtn').onclick = () => {
+  dark = !dark;
+  document.documentElement.setAttribute('data-theme', dark ? 'dark' : 'light');
+  document.getElementById('themeLbl').textContent = dark ? 'Light' : 'Dark';
+  document.getElementById('themeIco').innerHTML = dark
+    ? '<path d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364-6.364l-.707.707M6.343 17.657l-.707.707M18.364 18.364l-.707-.707M6.343 6.343l-.707-.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/>'
+    : '<path d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/>';
+};
+
+const sidebar = document.getElementById('sidebar');
+const overlay = document.getElementById('overlay');
+document.getElementById('hamburger').onclick = () => { sidebar.classList.add('open'); overlay.classList.add('show'); };
+const closeSide = () => { sidebar.classList.remove('open'); overlay.classList.remove('show'); };
+document.getElementById('sClose').onclick = closeSide;
+overlay.onclick = closeSide;
+document.querySelectorAll('.nav-a').forEach(a => { a.onclick = () => { if(window.innerWidth <= 768) closeSide(); }; });
+
+function switchView(type) {
+  document.getElementById('tabTbl').classList.toggle('active', type === 'tbl');
+  document.getElementById('tabJson').classList.toggle('active', type === 'json');
+  document.getElementById('viewTbl').style.display = type === 'tbl' ? 'block' : 'none';
+  document.getElementById('viewJson').style.display = type === 'json' ? 'block' : 'none';
+}
+
+let pendingUsername = '';
+
+function setStep(step) {
+  [1,2,3].forEach(i => {
+    document.getElementById('stepNum' + i).className = 'step-num' + (i < step ? ' done' : i === step ? ' active' : '');
+    document.getElementById('stepLbl' + i).className = 'step-lbl' + (i < step ? ' done' : i === step ? ' active' : '');
+  });
+  [1,2].forEach(i => {
+    document.getElementById('stepLine' + i).className = 'step-line' + (i < step ? ' done' : '');
+  });
+}
+
+function resetLogin() {
+  pendingUsername = '';
+  document.getElementById('loginUser').value = '';
+  document.getElementById('loginPass').value = '';
+  document.getElementById('otpInput').value = '';
+  document.getElementById('otpSection').style.display = 'none';
+  document.getElementById('loginSection').style.display = 'block';
+  document.getElementById('tokenBox').style.display = 'none';
+  setStep(1);
+}
+
+async function doLogin() {
+  const u = document.getElementById('loginUser').value.trim();
+  const p = document.getElementById('loginPass').value.trim();
+  const btn = document.getElementById('loginBtn');
+  if (!u || !p) return alert('Silahkan lengkapi username dan password!');
+  btn.disabled = true; btn.textContent = 'Mengirim OTP...';
+  try {
+    const res = await fetch(LOGIN_EP, { method: 'POST', headers: {'Content-Type': 'application/x-www-form-urlencoded'}, body: new URLSearchParams({username: u, password: p}) });
+    const data = await res.json();
+    if (data.success && data.results) {
+      pendingUsername = u;
+      document.getElementById('loginSection').style.display = 'none';
+      document.getElementById('otpSection').style.display = 'block';
+      document.getElementById('tokenBox').style.display = 'none';
+      setStep(2);
+      setTimeout(() => document.getElementById('otpInput').focus(), 100);
+    } else {
+      alert('Login gagal: ' + (data.message || 'Periksa username dan password Anda.'));
+    }
+  } catch (e) { alert('Kesalahan jaringan: ' + e.message); }
+  finally { btn.disabled = false; btn.textContent = 'Kirim OTP ke Email'; }
+}
+
+async function doVerifyOtp() {
+  const otp = document.getElementById('otpInput').value.trim();
+  const btn = document.getElementById('otpBtn');
+  if (!otp) return alert('Masukkan kode OTP terlebih dahulu!');
+  btn.disabled = true; btn.textContent = 'Memverifikasi...';
+  try {
+    const res = await fetch(OTP_EP, { method: 'POST', headers: {'Content-Type': 'application/x-www-form-urlencoded'}, body: new URLSearchParams({username: pendingUsername, otp: otp}) });
+    const data = await res.json();
+    if (data.success && data.results && data.results.token) {
+      const token = data.results.token;
+      const uname = data.results.username || pendingUsername;
+      document.getElementById('tokenDisplay').textContent = token;
+      document.getElementById('tokenUsernameDisplay').textContent = uname;
+      document.getElementById('tokenBox').style.display = 'block';
+      document.getElementById('tryUser').value = uname;
+      document.getElementById('tryTok').value = token;
+      setStep(3);
+      document.getElementById('tokenBox').scrollIntoView({behavior: 'smooth', block: 'nearest'});
+    } else {
+      alert('Verifikasi gagal: ' + (data.message || 'OTP tidak valid atau sudah kadaluarsa.'));
+    }
+  } catch (e) { alert('Kesalahan jaringan: ' + e.message); }
+  finally { btn.disabled = false; btn.textContent = 'Verifikasi OTP'; }
+}
+
+function copyToken() {
+  const token = document.getElementById('tokenDisplay').textContent;
+  navigator.clipboard.writeText(token).then(() => {
+    const btn = document.querySelector('.copy-btn');
+    btn.textContent = 'Tersalin!';
+    setTimeout(() => btn.textContent = 'Salin', 2000);
+  });
+}
+
+async function doReq() {
+  const u = document.getElementById('tryUser').value.trim();
+  const t = document.getElementById('tryTok').value.trim();
+  const btn = document.getElementById('sendBtn');
+  if (!u || !t) return alert('Silahkan lengkapi username dan token!');
+  btn.disabled = true; btn.textContent = 'Memproses Request...';
+  const container = document.getElementById('resContainer');
+  const badge = document.getElementById('resBadge');
+  const jsonView = document.getElementById('viewJson');
+  const tbody = document.getElementById('resTbody');
+  try {
+    const start = Date.now();
+    const res = await fetch(API_EP, { method: 'POST', headers: {'Content-Type': 'application/x-www-form-urlencoded'}, body: new URLSearchParams({username: u, token: t}) });
+    const data = await res.json();
+    container.style.display = 'block';
+    badge.textContent = res.status + ' ' + res.statusText;
+    badge.className = 'res-badge ' + (res.ok ? 'ok' : 'err');
+    document.getElementById('resMeta').textContent = (Date.now() - start) + 'ms · source: ' + (data.source || 'server');
+    jsonView.innerHTML = '<pre>' + JSON.stringify(data, null, 2) + '</pre>';
+    if (data.results && data.results.length > 0) {
+      tbody.innerHTML = data.results.map(i => {
+        const sa = Number((i.saldo_akhir || '0').toString().replace(/\./g, '')).toLocaleString('id-ID');
+        const kr = Number((i.kredit || '0').toString().replace(/\./g, '')).toLocaleString('id-ID');
+        return '<tr><td style="font-family:var(--mono);font-size:10.5px;color:var(--muted)">' + i.id + '</td><td style="white-space:nowrap;font-size:12px">' + i.tanggal + '</td><td style="font-size:12.5px;font-weight:500">' + i.keterangan + '</td><td class="text-right" style="color:var(--green);font-weight:700">Rp ' + kr + '</td><td class="text-right" style="font-family:var(--mono);font-weight:600;color:var(--head)">' + sa + '</td></tr>';
+      }).join('');
+      switchView('tbl');
+    } else {
+      tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;padding:36px;color:var(--muted)">Tidak ada riwayat transaksi</td></tr>';
+      switchView('json');
+    }
+    container.scrollIntoView({behavior: 'smooth', block: 'nearest'});
+  } catch (e) { alert('Kesalahan jaringan: ' + e.message); }
+  finally { btn.disabled = false; btn.textContent = 'Eksekusi Request Mutasi'; }
+}
+</script>
+</body>
+</html>
