@@ -4,6 +4,7 @@
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
 <title>OrderKuota QRIS API — Documentation</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%233b82f6'><path d='M13 10V3L4 14h7v7l9-11h-7z'/></svg>">
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"/>
 <style>
@@ -58,7 +59,7 @@ code{font-family:var(--mono);word-break:break-all}
   background:var(--surface);
   border-bottom:1px solid var(--line);
   display:flex;align-items:center;
-  padding:0 20px;gap:10px;
+  padding:0 20px;gap:12px;
   backdrop-filter:blur(12px);
   -webkit-backdrop-filter:blur(12px);
 }
@@ -78,14 +79,18 @@ code{font-family:var(--mono);word-break:break-all}
   white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
   min-width:0;
 }
-.t-right{display:flex;align-items:center;gap:8px;flex-shrink:0}
+.t-right{
+  display:flex;align-items:center;gap:8px;
+  flex-shrink:0;
+  margin-left:auto;
+}
 .t-online{
   display:flex;align-items:center;gap:6px;
   font-size:11.5px;color:var(--green);font-weight:700;
   background:var(--green-dim);
   border:1px solid rgba(16,185,129,.25);
-  padding:5px 10px;border-radius:99px;
-  white-space:nowrap;
+  padding:6px 11px;border-radius:99px;
+  white-space:nowrap;flex-shrink:0;
 }
 .t-pulse{width:6px;height:6px;background:var(--green);border-radius:50%;animation:pulse 2s infinite;flex-shrink:0}
 @keyframes pulse{0%{box-shadow:0 0 0 0 rgba(16,185,129,.4)}70%{box-shadow:0 0 0 7px rgba(16,185,129,0)}100%{box-shadow:0 0 0 0 rgba(16,185,129,0)}}
@@ -93,11 +98,11 @@ code{font-family:var(--mono);word-break:break-all}
   background:var(--panel);
   border:1.5px solid var(--line2);
   color:var(--dim);
-  padding:6px 11px;border-radius:9px;
+  padding:7px 12px;border-radius:9px;
   font-size:11.5px;
   display:flex;align-items:center;gap:7px;
   font-weight:600;white-space:nowrap;line-height:1;
-  transition:all .2s;
+  transition:all .2s;flex-shrink:0;
 }
 .t-theme:hover{background:var(--raised);color:var(--head);border-color:var(--blue)}
 .t-theme svg{width:15px;height:15px;flex-shrink:0}
@@ -189,12 +194,16 @@ tr:last-child td{border-bottom:none}
   background:var(--surface);
   border-top:1px solid var(--line);
   display:flex;flex-direction:column;
-  align-items:center;gap:8px;
+  align-items:center;gap:12px;
   width:100%;text-align:center;
 }
-.f-logo{display:flex;align-items:center;gap:10px;font-weight:800;color:var(--head);font-size:15px}
-.f-dot{width:4px;height:4px;background:var(--blue);border-radius:50%}
-.f-text{font-size:12.5px;color:var(--muted);max-width:440px;line-height:1.6}
+.f-header{
+  display:flex;align-items:center;justify-content:center;gap:8px;
+  flex-wrap:wrap;font-size:15px;color:var(--head);font-weight:800;
+  letter-spacing:-.01em;
+}
+.f-dot{width:5px;height:5px;background:var(--blue);border-radius:50%;flex-shrink:0}
+.f-text{font-size:12.5px;color:var(--muted);max-width:480px;line-height:1.6}
 .f-copy{font-weight:700;color:var(--blue)}
 
 .overlay{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:150;opacity:0;pointer-events:none;transition:.3s;backdrop-filter:blur(4px)}
@@ -214,18 +223,13 @@ tr:last-child td{border-bottom:none}
   .try-card{padding:18px}
   .token-box{padding:16px}
   .step-lbl{display:none}
-  .footer{padding:28px 16px}
+  .footer{padding:28px 16px;gap:10px}
+  .f-header{gap:6px;font-size:14px}
+  .f-dot{width:4px;height:4px}
   .btn-row{flex-direction:column}
   .btn-row .btn-green{flex:1}
   .page-title{font-size:clamp(22px,6vw,32px)}
   .section{margin-bottom:56px}
-}
-@media(max-width:480px){
-  .t-online span{display:none}
-  .t-online{padding:6px 8px}
-  .topbar{padding:0 14px;gap:8px}
-  .t-theme span{display:none}
-  .t-theme{padding:7px 9px}
 }
 </style>
 </head>
@@ -427,12 +431,14 @@ tr:last-child td{border-bottom:none}
   </div>
 
   <footer class="footer">
-    <div class="f-logo">
+    <div class="f-header">
       <span>OrderKuota</span>
       <div class="f-dot"></div>
       <span>Unofficial API</span>
+      <div class="f-dot"></div>
+      <span id="year"></span>
     </div>
-    <div class="f-text">&copy; <span id="year"></span> <span class="f-copy">OrderKuota</span>. All rights reserved.</div>
+    <div class="f-text">&copy; <span class="f-copy">OrderKuota</span>. All rights reserved.</div>
   </footer>
 </div>
 
